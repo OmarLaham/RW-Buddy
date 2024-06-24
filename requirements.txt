@@ -1,2 +1,9 @@
-googlemaps==4.10.0
 requests
+
+# ------- Google Maps ------ #
+googlemaps==4.10.0
+
+# ------- Open AI------- #
+openai==1.35.3
+
+

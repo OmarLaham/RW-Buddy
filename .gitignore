@@ -1,3 +1,5 @@
 /.env
-/imgs/captured/*.*
-/imgs/user_photos/*.*
+!imgs/plc_*.jpg
+imgs/captured/*.*
+imgs/user_photos/gs/*.*
+imgs/user_photos/nrt-gs/*.*

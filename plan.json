@@ -1,0 +1,38 @@
+{
+	"date": "",
+	
+	"start_location": "",
+	"places_to_visit": [
+	    {
+	        "place_id": "",
+	        "name": "",
+	        "rating": "",
+	        "maps_and_photos": "NA",
+	        "photo_reference": "",
+	        "memo": "",
+	        "validated": false
+	    },
+	    {
+	        "place_id": "",
+	        "name": "",
+	        "location": "",
+	        "maps_and_photos": "NA",
+	        "photo_reference": "",
+	        "memo": "",
+	        "validated": false
+	    }
+	],
+	"sport_exercises": [
+	    {
+	        "exercise": "",
+	        "count_goal": 0,
+	        "count_done": 0
+	    },
+	    {
+	        "exercise": "",
+	        "count_goal": 0,
+	        "count_done": 0
+	    }
+	],
+	"gained_coins": 0
+}

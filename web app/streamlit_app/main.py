@@ -32,7 +32,10 @@ load_dotenv()
 
 # Read Plan Json structure from 'plan.json' file
 with open('./plan.json') as f:
-    st.session_state.plan = json.load(f)
+    st.session_state.plan_template = json.load(f)
+    
+# Set default user name
+st.session_state.user_name = "Omar"
 
 # Read config yaml file
 with open('./config.yml', 'r') as file:
@@ -104,7 +107,8 @@ if 'user_motivated' in st.session_state and st.session_state.user_motivated in [
 	    st.success("Keep it up. I've got an encouraging plan :wink:")
 
 
-    if not 'plans_generated' in st.session_state:
+    if not 'plan' in st.session_state:
+        st.session_state.plan = None
     
         st.write("I will generate 2 plans for today so you can pick the one you like :wink:")
         # Generate 2 plans using Google Places
@@ -125,80 +129,115 @@ if 'user_motivated' in st.session_state and st.session_state.user_motivated in [
             st.write("\tWork place:")
             st.write("\t- Name: {0} (Rating: {1})".format(work_place["name"], work_place["rating"]))
             st.write("\t- Maps: {0}".format(work_place["maps_and_photos"]))
-            #st.image(str(Path("imgs") / "plc_{0}.jpg".format(work_place["place_id"])))
+            
             st.write("Fun place:")
             st.write("\t- Name: {0} (Rating: {1})".format(fun_place["name"], fun_place["rating"]))
             st.write("\t- Maps: {0}".format(fun_place["maps_and_photos"]))
             #st.image(str(Path("imgs") / "plc_{0}.jpg".format(fun_place["place_id"])))
             st.write("-----")
             
-        st.session_state.plans_generated = True
+        #st.session_state.plans_generated = True
 	
 	    # Get "Plan Num" value using button group
 	    
         def set_plan_num(plan_num):
             st.session_state.plan_num = plan_num
-            st.session_state.plan = select_plan(plan_num, st.session_state.plan, "TODO: start_location", st.session_state.rnd_work_plcs, st.session_state.rnd_fun_plcs)
-            mlog(st.session_state.plan)
+            # set plan session state
+            st.session_state.plan = select_plan(plan_num, st.session_state.plan_template, "TODO: start_location", st.session_state.rnd_work_plcs, st.session_state.rnd_fun_plcs)
             st.session_state["work_validating"] = True
             st.session_state["work_validated"] = False
             st.session_state["fun_validating"] = False
             st.session_state["fun_validated"] = False
 
-        if st.session_state.plans_generated:
-            # Display button group till one of the buttons is clicked
-            if 'plan_num' not in st.session_state or (st.session_state.plan_num == None):
-                st.session_state.plan_num = None
-                if st.button('Plan 1', on_click=set_plan_num, args=(1,)):
-                    print("plan num:", st.session_state.plan_num)
-                    st.success("Great!. Plan {0} Sounds like a good choice :wink:".format(st.session_state))
-                if st.button('Plan 2', on_click=set_plan_num, args=(2,)):
-	                st.success("Plan {0} seems interesting :wink:")
-	                print("plan num:", st.session_state.plan_num)
-            
-    if 'work_validating' in st.session_state and st.session_state.work_validating:
-            
-            # Reset messages queue
-            #st.session_state.messages = []
-            # clear page
-            #placeholder = st.empty()
+        #if st.session_state.plans_generated:
+        # Display button group till one of the buttons is clicked
+        if 'plan_num' not in st.session_state:
+            st.session_state.plan_num = None
+            if st.button('Plan 1', on_click=set_plan_num, args=(1,)):
+                print("plan num:", st.session_state.plan_num)
+                st.success("Great!. Plan {0} Sounds like a good choice :wink:".format(st.session_state))
+            if st.button('Plan 2', on_click=set_plan_num, args=(2,)):
+                st.success("Plan {0} seems interesting :wink:")
+                print("plan num:", st.session_state.plan_num)
+	                
+    # if plans_generated
+    else:
+    
+        if 'work_validating' in st.session_state and st.session_state.work_validating:
                 
-            # Start with selected plan
-            msg = client_chat(client=gpt_client, user_input="", ass_content="Let's start the day with work!. You have to visit '{0}'. When you're ready to validate your presence there , please click on the button.".format(st.session_state.plan["places_to_visit"][0]["name"]))
-            st.session_state.messages.append({
-                "role": "assistant", 
-                "content": msg
-            })
-            
-            # as long as not correctly validated keep it visual
-            if not st.session_state.work_validated:
-            
-                if st.button("Upload Photo To Validate"): # handle on click
-                    uploaded_file = st.file_uploader("Choose a file")
-                    if uploaded_file is not None:
-                        mlog(">>>>>>>>>>>", uploaded_file.name)
-                        
-                #st.session_state.work_validated, msg = validate_usr_in_plc(captured_img_path, val_usr_name, plc_id)
-                #mlog("Validation msg:", msg)
+                # Reset messages queue
+                #st.session_state.messages = []
+                # clear page
+                #placeholder = st.empty()
+                    
+                # Start with work place from selected plan
+                st.session_state.work_place = st.session_state.plan["places_to_visit"][0]
+                msg = client_chat(client=gpt_client, user_input="", ass_content="Let's start the day with work!. You have to visit '{0}'. When you're ready to validate your presence there , please click on the button.".format(st.session_state.work_place["name"]))
+                st.write(msg)
+                st.write("Please upload a photo of your self so the background looks similar to this:")
+                st.image(str(Path("imgs") / "plc_{0}.jpg".format(st.session_state.work_place["place_id"])))
+                
+                uploadbtn = st.button("Upload Image")
+                
+                if "uploadbtn_state" not in st.session_state:
+                    st.session_state.uploadbtn_state = False
+                    
+                if uploadbtn or st.session_state.uploadbtn_state:
+                    st.session_state.uploadbtn_state = True
+
+                    image_file = st.file_uploader("Upload image", type=["jpg", "jpeg", "png"])
+                    if image_file is not None:
+                            print("@@@@@@", image_file.name)
+
+                #if image_file is not None:
+                
+                #st.session_state.messages.append({
+                #    "role": "assistant", 
+                #    "content": msg
+                #})
+                
+                # as long as not correctly validated keep it visual
+                if not st.session_state.work_validated:
+                
+                    if st.button("Upload Photo To Validate"): # handle on click
+                        st.session_state.work_uploaded_img = st.file_uploader("Choose a file")
+                        print("*", st.session_state.work_uploaded_img)
+                        if st.session_state.work_uploaded_img is not None:
+                            # 1- Save uploaded photo
+                            captured_img_path = Path("imgs" / "captured" / "user_upload.jpg")
+                            with open(captured_img_path, mode='wb') as w:
+                                w.write(st.session_state.work_uploaded_img.getvalue())
+                                
+                            # 2- validate face and place
+                            st.session_state.work_validated, msg = validate_usr_in_plc(captured_img_path, st.session_state.user_name, st.session_state.work_place["place_id"])
+                            if st.session_state.work_validated:
+                                st.success(msg)
+                            
+                                # Switch to fun place validating
+                                st.session_state.work_validating = False
+                                st.session_state.fun_validating = True
+                                
+                            elif not st.session_state.work_validated:
+                                st.warning(msg)
                     
             
-    
     # React to user input
-    if prompt := st.chat_input("Please type 1 or 2"):
-        #if prompt := st.chat_input("Please type 1 or 2"):
-        # Add user message to chat history
-        st.session_state.messages.append({"role": "user", "content": "Plan {0} seems more interesting".format(st.session_state.plan_num)})
-        st.session_state.messages.append({"role": "assistant", "content": "I think this is a great choice :wink:"})
+    if False:
+        if prompt := st.chat_input("Please type 1 or 2"):
+            #if prompt := st.chat_input("Please type 1 or 2"):
+            # Add user message to chat history
+            st.session_state.messages.append({"role": "user", "content": "Plan {0} seems more interesting".format(st.session_state.plan_num)})
+            st.session_state.messages.append({"role": "assistant", "content": "I think this is a great choice :wink:"})
 
-        # Display user message in chat message container
-        with st.chat_message("user"):
-            st.markdown(prompt)
-        # Get bot response    
-        response = echo_bot(prompt)
-        with st.chat_message("assistant", avatar=config['streamlit']['avatar']):
-            st.markdown(response)
-        # Add assistant response to chat history
-        st.session_state.messages.append({"role": "assistant", "content": response})
+            # Display user message in chat message container
+            with st.chat_message("user"):
+                st.markdown(prompt)
+            # Get bot response    
+            response = echo_bot(prompt)
+            with st.chat_message("assistant", avatar=config['streamlit']['avatar']):
+                st.markdown(response)
+            # Add assistant response to chat history
+            st.session_state.messages.append({"role": "assistant", "content": response})
 
 
     

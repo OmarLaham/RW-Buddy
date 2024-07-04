@@ -9,7 +9,6 @@
 	        "rating": "",
 	        "maps_and_photos": "NA",
 	        "photo_reference": "",
-	        "memo": "",
 	        "validated": false
 	    },
 	    {
@@ -18,7 +17,6 @@
 	        "location": "",
 	        "maps_and_photos": "NA",
 	        "photo_reference": "",
-	        "memo": "",
 	        "validated": false
 	    }
 	],
@@ -34,5 +32,6 @@
 	        "count_done": 0
 	    }
 	],
+	"memo": "",
 	"gained_coins": 0
 }

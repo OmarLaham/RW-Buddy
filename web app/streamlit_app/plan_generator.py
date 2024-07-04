@@ -220,7 +220,6 @@ def select_plan(plan_num, plan, start_location, rnd_work_plcs, rnd_fun_plcs):
         "rating": work_plc["rating"],
         "maps_and_photos": work_plc["maps_and_photos"],
         "photo_reference": work_plc["photo_reference"],
-        "memo": "",
         "validated": False
     }
     # fun place
@@ -230,7 +229,6 @@ def select_plan(plan_num, plan, start_location, rnd_work_plcs, rnd_fun_plcs):
         "rating": fun_plc["rating"],
         "maps_and_photos": fun_plc["maps_and_photos"],
         "photo_reference": fun_plc["photo_reference"],
-        "memo": "",
         "validated": False
     }
     

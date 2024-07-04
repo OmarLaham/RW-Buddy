@@ -58,7 +58,7 @@ st.sidebar.title("About")
 st.sidebar.info(config['streamlit']['about'])
 
 # Set logo
-st.image(config['streamlit']['logo'], width=50)
+st.image(config['streamlit']['logo'], width=128)
 
 # Set page title
 st.title(title)
@@ -154,8 +154,8 @@ if 'user_motivated' in st.session_state and not st.session_state.user_motivated 
             st.session_state.plan = select_plan(plan_num, st.session_state.plan_template, "TODO: start_location", st.session_state.rnd_work_plcs, st.session_state.rnd_fun_plcs)
             st.session_state["work_validating"] = True
             st.session_state["work_validated"] = False
-            st.session_state["fun_validating"] = False
-            st.session_state["fun_validated"] = False
+            #st.session_state["fun_validating"] = False
+            #st.session_state["fun_validated"] = False
 
         #if st.session_state.plans_generated:
         # Display button group till one of the buttons is clicked
@@ -224,18 +224,14 @@ if 'user_motivated' in st.session_state and not st.session_state.user_motivated 
                             if st.session_state["work_validating"]:
                                 st.session_state.plan["places_to_visit"][0]["validated"] = True
                                 st.session_state.work_validating = False
+                                
+                                # Create fun session state vars
                                 st.session_state.fun_validating = True
-                                st.empty()
-                                if st.button("Let's move on to fun! :wink:"):
-                                    st.session_state.btn_fun_clicked = True
-                                    pass
+                                st.session_state.fun_validated = False
                                 
                             elif st.session_state["fun_validating"]:
                                 st.session_state.plan["places_to_visit"][1]["validated"] = True
-                                st.empty()
-                                if st.button("Let's finish the day :wink:"):
-                                    st.session_state.writing_memo = True
-                                    pass
+                                st.session_state.writing_memo = True
                                 
                         # If validation fails    
                         elif not st.session_state[session_validated_key]:
@@ -252,50 +248,58 @@ if 'user_motivated' in st.session_state and not st.session_state.user_motivated 
             st.empty()
             plc_validate('work_validating')
             
-        if 'btn_fun_clicked' in st.session_state: # validating fun place on btn click
+        if 'fun_validating' in st.session_state and not st.session_state.fun_validated: # validating fun place which is still not vlidated
         
-            # del / reset previous photo upload session state vars
-            del st.session_state["uploadbtn_state"]
-            st.session_state.uploaded_img = None
+            btn_fun = st.button("It's fun time! :wink:")
             
-            # clear page
-            st.empty()
-            plc_validate('fun_validating')
-            
+            if not 'btn_fun_state' in st.session_state:
+                st.session_state.btn_fun_state = False
+                # del / reset previous photo upload session state vars
+                del st.session_state["uploadbtn_state"]
+                st.session_state.uploaded_img = None
+                # clear page
+                st.empty()
+                
+            if btn_fun or st.session_state.btn_fun_state:
+                st.session_state.btn_fun_state = True
+                plc_validate('fun_validating')
+                
             
         # If places are validated
         if 'writing_memo' in st.session_state:
         
-            # path to save plan
-            today_plan_path = Path("daily_plans") / "plan_{0}.json".format(st.session_state.plan["date"])
+            btn_memo = st.button("Time to finish the day :wink:")
+            
+            if not 'btn_memo_state' in st.session_state:
+                st.session_state.btn_memo_state = False
+                
+            if btn_memo or st.session_state.btn_memo_state:
+                st.session_state.btn_memo_state = True
         
-            if not 'btn_memo_clicked' in st.session_state:
-                # clear page
-                st.empty()
-                
-                msg = "📝 " + client_chat(client=gpt_client, user_input="", ass_content="You must be proud of your self! How about writing a short memo about what you achieved today? This will be saved with today's plan and gives you extra +30 BONUS")
-                st.write(msg + " :wink:")
-                
-                memo = st.text_input("Today's Memo", "")
-                if st.button('Save and End'):
-                    st.session_state.btn_memo_clicked = True
-                    if not memo == "":
-                        st.session_state.plan["memo"] = memo
-                        st.session_state.plan["gained_coins"] += 30
-                        st.write("💎 You have just got +30 BONUS 💎")
-                    else:
-                        st.write("Empty memo. no extra bonus for today 😔. Maybe you write a short note next time? :wink:")
-                        
-                    # Save as JSON
-                    with open(str(today_plan_path), 'w') as f:
-                        json.dump(st.session_state.plan, f)
+                # path to save plan
+                today_plan_path = Path("daily_plans") / "plan_{0}.json".format(st.session_state.plan["date"])
+            
+                if not 'btn_memo_clicked' in st.session_state:
+                    # clear page
+                    st.empty()
                     
+                    msg = "📝 " + client_chat(client=gpt_client, user_input="", ass_content="You must be proud of your self! How about writing a short memo about what you achieved today? This will be saved with today's plan and gives you extra +30 BONUS")
+                    st.write(msg + " :wink:")
                     
-            else:
-                # Finish the program
-                time.sleep(3)  # Wait 3 seconds before ending
-                st.empty() 
-                st.write("🥳 Great day! 🥳. You can download today's plan using this link: {0}".format(today_plan_path))
+                    memo = st.text_input("Today's Memo", "")
+                    if st.button('Save and End'):
+                        st.session_state.btn_memo_clicked = True
+                        if not memo == "":
+                            st.session_state.plan["memo"] = memo
+                            st.session_state.plan["gained_coins"] += 30
+                            st.write("💎 You have just got +30 BONUS 💎")
+                        else:
+                            st.write("Empty memo. no extra bonus for today 😔. Maybe you write a short note next time? :wink:")
+                            
+                        # Save as JSON
+                        with open(str(today_plan_path), 'w') as f:
+                            json.dump(st.session_state.plan, f)
+                            st.write("🥳 Great day! 🥳. You can download today's plan using this link: {0}".format(today_plan_path))
                     
             
         

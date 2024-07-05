@@ -1,6 +1,5 @@
 # RW-Buddy
 <img src="/web_app/streamlit_app/images/logo.png" width="128" height="128" alt="RW-Buddy Logo" />
-<br />
 An AI Agent That Brings Joy Back Into Remote-Workers Life by suggesting a daily plan that contains places to visit for working and having fun.
 
 ## Features:

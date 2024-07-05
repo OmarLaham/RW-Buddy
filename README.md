@@ -1,5 +1,5 @@
 # RW-Buddy
-AI Agent That Brings Joy Back Into Remote-Workers Life by suggesting a daily plan that contains working places.
+An AI Agent That Brings Joy Back Into Remote-Workers Life by suggesting a daily plan that contains places to visit for working and having fun.
 
 ## Features:
 - Day plan generating using **Google Places API** and according to search criteria. Two plans are generated so the user can use.
@@ -31,7 +31,7 @@ All the code is wrapped in a full-stack [Streamlit](https://streamlit.io/) App.
 The app is ready to be deployed to Azure and uses [this Micosoft provided repo](https://github.com/microsoft/azure-streamlit-chatbot) as an initial template.
 
 ## Demo Video:
-Would like to watch in action? Click [here](/demo/demo.mp4) for a video demo of the app 😊.
+Would like to watch in action 🤩? Click [here](https://youtu.be/fnhrjF15kyQ) for a Youtube video demo ▶️ of the app 😊.
 
 ## Screenshot:
 ![RW-Buddy Demo Screenshot](/demo/screenshot.png "RW-Buddy Demo Screenshot")

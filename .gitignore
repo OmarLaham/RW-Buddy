@@ -1,5 +1,8 @@
-/.env
-!imgs/plc_*.jpg
-imgs/captured/*.*
-imgs/user_photos/gs/*.*
-imgs/user_photos/nrt-gs/*.*
+.env
+
+!tinkering/imgs/plc_*.jpg
+tinkering/imgs/captured/*.*
+tinkering/imgs/user_photos/gs/*.*
+tinkering/imgs/user_photos/nrt-gs/*.*
+
+demo/demo.mp4

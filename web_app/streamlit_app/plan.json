@@ -1,0 +1,27 @@
+{
+	"date": "",
+	"start_location": {
+		"lat": "49.9807",
+		"long": "9.1356"
+	},
+	"places_to_visit": [
+	    {
+	        "place_id": "",
+	        "name": "",
+	        "rating": "",
+	        "maps_and_photos": "NA",
+	        "photo_reference": "",
+	        "validated": false
+	    },
+	    {
+	        "place_id": "",
+	        "name": "",
+	        "location": "",
+	        "maps_and_photos": "NA",
+	        "photo_reference": "",
+	        "validated": false
+	    }
+	],
+	"memo": "",
+	"gained_coins": 0
+}

@@ -1,0 +1,25 @@
+DEFAULT:
+    #"gmaps place types. Full supported values: https://developers.google.com/maps/documentation/places/web-service/supported_types"
+    motivated_work_plc_types: 
+        - library
+        - university
+    lazy_work_plc_types:
+        - bakery
+        - cafe
+        - restaurant
+        - shopping_mall 
+    fun_plc_types:
+        - amusement_park
+        - aquarium
+        - art_gallery
+        - jewelry_store
+        - movie_theater
+        - museum
+        - park
+        - tourist_attraction
+    search_radius: 30000
+    start_location:
+        lat: 49.9807
+        long: 9.1356
+    max_n_plcs: 2
+    min_rating: 3.5

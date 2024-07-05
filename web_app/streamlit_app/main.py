@@ -30,32 +30,6 @@ load_dotenv()
 # run as demo. Aschaffenburg Central Station as starting search point. Plan 2 will be the one stored in plan_demo.json (work: library, fun: eat at hotel restaurant)
 st.session_state.demo = True
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 # Read Plan Json structure from 'plan.json' file
 with open('./plan.json') as f:
     st.session_state.plan_template = json.load(f)

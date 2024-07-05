@@ -2,6 +2,7 @@ import os
 from dotenv import load_dotenv # use this Python library to load your variables
 import pathlib as pathlib
 from pathlib import Path
+import shutil
 import json
 from datetime import datetime
 import time

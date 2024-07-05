@@ -138,6 +138,9 @@ def generate_fun_plcs():
         radius = conf.search_radius,
         type = conf.fun_plc_types,
         language = "en")
+        
+    for plc in fun_plcs:
+        print(plc)
 
     # Debugging
     #print("Found {0} fun places.".format(len(fun_plcs["results"])))

@@ -1,7 +1,9 @@
 {
 	"date": "",
-	
-	"start_location": "",
+	"start_location": {
+		"lat": "49.9807",
+		"long": "9.1356"
+	},
 	"places_to_visit": [
 	    {
 	        "place_id": "",
@@ -18,18 +20,6 @@
 	        "maps_and_photos": "NA",
 	        "photo_reference": "",
 	        "validated": false
-	    }
-	],
-	"sport_exercises": [
-	    {
-	        "exercise": "",
-	        "count_goal": 0,
-	        "count_done": 0
-	    },
-	    {
-	        "exercise": "",
-	        "count_goal": 0,
-	        "count_done": 0
 	    }
 	],
 	"memo": "",

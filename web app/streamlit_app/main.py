@@ -10,9 +10,6 @@ from plan_generator import generate_plans, select_plan
 
 from face_place_validation import validate_usr_in_plc
 
-#from llm_bot import dummy_bot, echo_bot #contains logic for bot's response
-
-
 def mlog(msg):
 	"""
 	Simple logging to console function
@@ -66,32 +63,16 @@ st.title(title)
 # ---------------------------
 # Start logic
 
-# Use this value to help control streamlit state logic
-EMPTY_STATE = "EMPTY_STATE"
-
-
+# run as demo. Aschaffenburg Central Station as starting search point. Plan 2 will be the one stored in plan_demo.json (work: library, fun: eat at hotel restaurant)
+st.session_state.demo = True
 
 # Create OpenAI client
 gpt_client = OpenAI() #API_key is automatically read from .env using "load_dotenv" package
 
 if not 'plan_num' in st.session_state:
-    msg = "how you feel?" # TODO: client_chat(client=gpt_client, user_input="", ass_content="Say greetings and ask if feeling motivated or low today")
+    msg = client_chat(client=gpt_client, user_input="", ass_content="Say greetings and ask if feeling motivated or low today")
     st.write(msg)
 
-# Initialize chat history
-#if "messages" not in st.session_state:
-#	st.session_state.messages = []
-#	msg = "how you feel?" # TODO: client_chat(client=gpt_client, user_input="", ass_content="Say greetings and ask if feeling motivated or low today")
-#	
-#	st.session_state.messages.append({
-#		"role": "assistant", 
-#		"content": msg
-#	})
-
-# Display chat messages from history on app rerun
-#for message in st.session_state.messages:
-#    with st.chat_message(message["role"], avatar=avatar[message["role"]]):
-#        st.markdown(message["content"])
 
 # Get "Motivated" or "Not" response using a button group
     def set_user_motivated_val(val):
@@ -134,13 +115,15 @@ if 'user_motivated' in st.session_state and not st.session_state.user_motivated 
 
             st.write(f"**Plan {plan_num}:**")
 
-            st.write("\tWork place:")
-            st.write("\t- Name: {0} (Rating: {1})".format(work_place["name"], work_place["rating"]))
-            st.write("\t- Maps: {0}".format(work_place["maps_and_photos"]))
+            st.write("\t> Work place:")
+            st.write("\t\t- Name: {0} (Rating: {1})".format(work_place["name"], work_place["rating"]))
+            st.write("\t\t- Google Maps: [Click here]({0})".format(work_place["maps_and_photos"]))
+
             
-            st.write("Fun place:")
-            st.write("\t- Name: {0} (Rating: {1})".format(fun_place["name"], fun_place["rating"]))
-            st.write("\t- Maps: {0}".format(fun_place["maps_and_photos"]))
+            st.write("\t> Fun place:")
+            st.write("\t\t- Name: {0} (Rating: {1})".format(fun_place["name"], fun_place["rating"]))
+            st.write("\t\t- Google Maps: [Click here]({0})".format(fun_place["maps_and_photos"]))
+            
             #st.image(str(Path("imgs") / "plc_{0}.jpg".format(fun_place["place_id"])))
             st.write("-----")
             
@@ -150,8 +133,30 @@ if 'user_motivated' in st.session_state and not st.session_state.user_motivated 
 	    
         def set_plan_num(plan_num):
             st.session_state.plan_num = plan_num
-            # set plan session state
-            st.session_state.plan = select_plan(plan_num, st.session_state.plan_template, "TODO: start_location", st.session_state.rnd_work_plcs, st.session_state.rnd_fun_plcs)
+            # Set plan session state
+            
+            # Remove previously saved plans' places images
+            for f_path in Path("imgs").glob("plc_*.jpg"):
+                os.remove(str(f_path))
+            
+            if st.session_state.demo:
+
+                st.warning("Running in DEMO MODE")
+                
+                # Copy places images from imgs/demo_places to imgs/ since we don'r retrieve them in demo mode
+                demo_imgs_dir = str(Path("imgs") / "demo_places")
+                imgs_dir = str(Path("imgs"))
+                shutil.copytree(demo_imgs_dir, imgs_dir, dirs_exist_ok=True) # Copy all files in demo_places to destination
+                
+                # Read demo plan json structure from 'plan_demo.json'
+                with open('./plan_demo.json') as f:
+                    demo_plan = json.load(f)
+                    # Replace empty date by today's date
+                    demo_plan["date"] = datetime.today().strftime('%d.%m.%Y')
+                    st.session_state.plan = demo_plan
+            else:
+                st.session_state.plan = select_plan(plan_num, st.session_state.plan_template, "TODO: allow different start_locations", st.session_state.rnd_work_plcs, st.session_state.rnd_fun_plcs)
+            
             st.session_state["work_validating"] = True
             st.session_state["work_validated"] = False
             #st.session_state["fun_validating"] = False
@@ -203,16 +208,15 @@ if 'user_motivated' in st.session_state and not st.session_state.user_motivated 
                     st.session_state.uploadbtn_state = True
                     
                     st.session_state.uploaded_img = st.file_uploader("Choose a file")
-                    # Debugging
-                    print("* Uploaded file name:", st.session_state.uploaded_img)
+                    
                     if st.session_state.uploaded_img is not None:
                         # 1- Save uploaded photo
                         captured_img_path = Path("imgs") / "captured" / "user_upload.jpg"
                         with open(captured_img_path, mode='wb') as w:
                             w.write(st.session_state.uploaded_img.getvalue())
                             
-                        # 2- validate face and place. #TODO: remove default place id
-                        st.session_state[session_validated_key], msg = validate_usr_in_plc(captured_img_path, st.session_state.user_name, "ChIJo7uyXuVHvUcRJnq0SFwXuGc")# TODO: st.session_state.work_place["place_id"])
+                        # 2- validate face and place.
+                        st.session_state[session_validated_key], msg = validate_usr_in_plc(captured_img_path, st.session_state.user_name, st.session_state.validate_place["place_id"])
                         if st.session_state[session_validated_key]:
                             st.write("🥳🥳 " + msg)
                             st.session_state.plan["gained_coins"] += 50
@@ -276,9 +280,6 @@ if 'user_motivated' in st.session_state and not st.session_state.user_motivated 
             if btn_memo or st.session_state.btn_memo_state:
                 st.session_state.btn_memo_state = True
         
-                # path to save plan
-                today_plan_path = Path("daily_plans") / "plan_{0}.json".format(st.session_state.plan["date"])
-            
                 if not 'btn_memo_clicked' in st.session_state:
                     # clear page
                     st.empty()
@@ -296,17 +297,14 @@ if 'user_motivated' in st.session_state and not st.session_state.user_motivated 
                         else:
                             st.write("Empty memo. no extra bonus for today 😔. Maybe you write a short note next time? :wink:")
                             
+                        st.write("🥳 Great day! 🥳")
+                        
+                        # Debugging
                         # Save as JSON
+                        today_plan_path = str(Path("daily_plans") / "plan_{0}.json".format(st.session_state.plan["date"]))
                         with open(str(today_plan_path), 'w') as f:
                             json.dump(st.session_state.plan, f)
-                            st.write("🥳 Great day! 🥳. You can download today's plan using this link: {0}".format(today_plan_path))
-                    
-            
-        
-        
-                    
-            
+                            
+                            
 
 
-
-    

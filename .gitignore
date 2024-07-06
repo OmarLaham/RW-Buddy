@@ -1,0 +1,8 @@
+.env
+
+!tinkering/imgs/plc_*.jpg
+tinkering/imgs/captured/*.*
+tinkering/imgs/user_photos/gs/*.*
+tinkering/imgs/user_photos/nrt-gs/*.*
+
+demo/demo.mp4

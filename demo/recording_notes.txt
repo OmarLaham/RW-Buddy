@@ -1,0 +1,11 @@
+Use of OpenCV for face detection, recognition and bacground similarity check:
+
+> Frontalface Cascade Classifier
+
+> LOCAL BINARY PATTERNS HISTOGRAM (LBPH) Face Recognizer
+
+> findHomography()
+
+* Gray-scale & Scaling
+
+Thanks =)

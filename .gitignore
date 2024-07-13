@@ -6,3 +6,6 @@ tinkering/imgs/user_photos/gs/*.*
 tinkering/imgs/user_photos/nrt-gs/*.*
 
 demo/demo.mp4
+
+.ipynb_checkpoints
+__pycache__
